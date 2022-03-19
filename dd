@@ -1,0 +1,16 @@
+ubuntu@hv-1:~$ sudo dd if=ubuntu-20.04-server-cloudimg-arm64.img of=/dev/vg/110474138 bs=1M conv=fsync status=progress
+2234515456 bytes (2.2 GB, 2.1 GiB) copied, 13 s, 172 MB/s
+2252+0 records in
+2252+0 records out
+2361393152 bytes (2.4 GB, 2.2 GiB) copied, 18.2221 s, 130 MB/s
+ubuntu@hv-1:~$ 
+
+
+
+ubuntu@hv-2:~$ sudo dd if=ubuntu-20.04-server-cloudimg-arm64.img of=/dev/sdb bs=1M conv=fsync status=progress
+2358247424 bytes (2.4 GB, 2.2 GiB) copied, 23 s, 103 MB/s
+2252+0 records in
+2252+0 records out
+2361393152 bytes (2.4 GB, 2.2 GiB) copied, 33.632 s, 70.2 MB/s
+ubuntu@hv-2:~$
+

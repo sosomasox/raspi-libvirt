@@ -1,0 +1,225 @@
+
+
+ID=489899870
+sudo lvcreate -y -L 32Gi vg -n ${ID}
+sudo tgtadm --lld iscsi --mode target --op new --tid ${ID} --targetname iqn.2022-02.arpa.home.pistack:st-1.${ID}
+sudo tgtadm --lld iscsi --mode logicalunit --op new --tid ${ID} --lun 1 --backing-store /dev/vg/${ID}
+sudo tgtadm --lld iscsi --mode target --op bind --tid ${ID} --initiator-address 192.168.0.0/16
+sudo tgtadm --mode target --op show
+
+
+sudo iscsiadm -m discoverydb -t sendtargets -p st-1.pistack.home.arpa:3260 --discover
+sudo iscsiadm -m node -T iqn.2022-02.arpa.home.pistack:st-1.489899870 --login
+sudo iscsiadm -m session
+
+
+
+sudo lvcreate -y -L 32Gi vg -n 1824053445
+sudo tgtadm --lld iscsi --mode target --op new --tid 1824053445 --targetname iqn.2022-02.arpa.home.pistack:st-1.1824053445
+sudo tgtadm --lld iscsi --mode logicalunit --op new --tid 1824053445 --lun 1 --backing-store /dev/vg/1824053445
+sudo tgtadm --lld iscsi --mode target --op bind --tid 1824053445 --initiator-address 192.168.0.0/16
+sudo tgtadm --mode target --op show
+
+
+
+sudo lvcreate -y -L 32Gi vg -n 1127797878
+sudo tgtadm --lld iscsi --mode target --op new --tid 1127797878 --targetname iqn.2022-02.arpa.home.pistack:st-1.1127797878
+sudo tgtadm --lld iscsi --mode logicalunit --op new --tid 1127797878 --lun 1 --backing-store /dev/vg/1127797878
+sudo tgtadm --lld iscsi --mode target --op bind --tid 1127797878 --initiator-address 192.168.0.0/16
+sudo tgtadm --mode target --op show
+
+
+
+sudo sh -c 'tgt-admin --dump > /etc/tgt/conf.d/1824053445.conf'
+sudo sh -c 'tgt-admin --dump > /etc/tgt/conf.d/1824053445.conf'
+
+
+write-cache off
+sudo iscsiadm -m session
+sudo sh -c 'echo "write-cache off" >> /etc/tgt/conf.d/bbc779c8-e24e-4aec-8fa5-9b5d37784cb3.conf'
+
+sudo tgt-admin --update iqn.2022-02.arpa.home.pistack:st-1.1824053446 --conf /etc/tgt/conf.d/1824053446.conf
+
+
+
+sudo tgtadm --lld iscsi --mode logicalunit --op delete --tid 489899870 --lun 1
+sudo tgtadm --lld iscsi --mode target --op delete --tid 489899870
+sudo lvremove -y vg/489899870
+
+
+
+
+
+sudo tgtadm --lld iscsi --mode target --op new --tid 1 --targetname 53c10f56-453e-4caf-8d9f-5943cbc20a3a
+sudo tgtadm --lld iscsi --mode logicalunit --op new --tid 1 --lun 1 --backing-store /dev/vg/53c10f56-453e-4caf-8d9f-5943cbc20a3a
+sudo tgtadm --lld iscsi --mode target --op bind --tid 1 --initiator-address 192.168.0.0/16
+
+sudo tgtadm --lld iscsi --mode logicalunit --op new --tid 491172340 --lun 1 --backing-store /dev/vg/a9793c69-3076-4604-bc57-9ef749e944ef
+sudo tgtadm --lld iscsi --mode target --op bind --tid 491172340 --initiator-address 192.168.0.0/16
+
+sudo tgtadm --mode target --op show
+
+
+
+
+
+sudo iscsiadm -m node -T iqn.2022-02.arpa.home.pistack:st-1.1127797878 --login
+
+
+
+sudo iscsiadm -m discoverydb -t sendtargets -p st-1.pistack.home.arpa:3260 --discover
+
+sudo iscsiadm -m node -T iqn.2022-02.arpa.home.pistack:st-1.1824053445 --login
+sudo iscsiadm -m session
+sudo iscsiadm -m node -T iqn.2022-02.arpa.home.pistack:st-1.1824053445 --logout
+sudo iscsiadm -m node -T iqn.2022-02.arpa.home:pistack:st-1.1824053445 --op=delete
+sudo iscsiadm -m discoverydb -t sendtargets -p st-1.pistack.home.arpa:3260 --op=delete
+
+
+sudo iscsiadm -m node -T iqn.2022-02.arpa.home.pistack:st-1.489899870 --logout
+sudo iscsiadm -m node -T iqn.2022-02.arpa.home:pistack:st-1.1824053445 --op=delete
+sudo iscsiadm -m discoverydb -t sendtargets -p st-1.pistack.home.arpa:3260 --op=delete
+
+
+
+sudo vim /etc/lvm/lvm.conf
+
+wipe_signatures_when_zeroing_new_lvs = 0
+
+
+
+sudo apt install -y tgt
+
+sudo lvcreate -y -L 16Gi vg -n hcloud-iscsi-target1
+sudo lvcreate -y -L 16Gi vg -n hcloud-iscsi-target2
+sudo lvcreate -y -L  4Gi vg -n hcloud-iscsi-target3
+sudo lvcreate -y -L  2Gi vg -n hcloud-iscsi-target4
+
+-----------------------------------------
+sudo lvremove -y vg/hcloud-iscsi-target1
+sudo lvremove -y vg/hcloud-iscsi-target2
+sudo lvremove -y vg/hcloud-iscsi-target3
+sudo lvremove -y vg/hcloud-iscsi-target4
+-----------------------------------------
+
+
+    
+/etc/tgt/conf.d/hcloud-iscsi.conf
+<target iqn.2022-02.arpa.home:config.target1>
+    backing-store /dev/vg/hcloud-iscsi-target1
+    initiator-address 192.168.0.0/16
+    write-cache off
+</target>
+
+
+<target iqn.2022-02.arpa.home:config.target2>
+    backing-store /dev/vg/hcloud-iscsi-target2
+    initiator-address 192.168.0.0/16
+    write-cache off
+</target>
+
+
+<target iqn.2022-02.arpa.home:config.target3>
+    backing-store /dev/vg/hcloud-iscsi-target3
+    initiator-address 192.168.0.0/16
+    write-cache off
+</target>
+
+
+<target iqn.2022-02.arpa.home:config.target4>
+    backing-store /dev/vg/hcloud-iscsi-target4
+    initiator-address 192.168.0.0/16
+    write-cache off
+</target>
+
+
+
+sudo systemctl enable tgt
+sudo systemctl restart tgt
+
+sudo tgtadm --mode target --op show
+
+
+
+--------------------------------------------------------------------------------------
+
+
+
+sudo iscsiadm -m discoverydb -t sendtargets -p config.home.arpa:3260 --discover
+
+sudo iscsiadm -m node -T iqn.2022-02.arpa.home:config.target1 --login
+
+sudo iscsiadm -m node -T iqn.2022-02.arpa.home:config.target2 --login
+
+
+sudo iscsiadm -m session
+
+
+sudo iscsiadm -m node -T iqn.2022-02.arpa.home:config.target1 --logout
+sudo iscsiadm -m node -T iqn.2022-02.arpa.home:config.target2 --logout 
+
+
+sudo iscsiadm -m node -T iqn.2022-02.arpa.home:config.target1 --op=delete
+sudo iscsiadm -m node -T iqn.2022-02.arpa.home:config.target2 --op=delete
+
+
+sudo rm -rf /etc/iscsi/send_targets/config.home.arpa,3260
+
+
+sudo iscsiadm -m node -T iqn.2022-02.arpa.home:config.target1 --op=delete
+sudo iscsiadm -m node -T iqn.2022-02.arpa.home:config.target2 --op=delete
+sudo iscsiadm -m node -T iqn.2022-02.arpa.home:config.target3 --op=delete
+sudo iscsiadm -m node -T iqn.2022-02.arpa.home:config.target4 --op=delete
+
+
+sudo apt install lsscsi
+lsscsi
+
+
+
+
+
+
+ubuntu@config:~$ sudo cat /etc/tgt/conf.d/hcloud-iscsi.conf 
+# This is a sample config file for tgt-admin.
+# By default, tgt-admin looks for its config file in /etc/tgt/targets.conf
+
+# This one includes other config files:
+
+include /etc/tgt/temp/*.conf
+
+
+# Set the driver. If not specified, defaults to "iscsi".
+
+default-driver iscsi
+
+
+<target iqn.2022-02.arpa.home:config.target1>
+    backing-store /dev/vg/hcloud-iscsi-target1
+    initiator-address 192.168.0.0/16
+    write-cache off
+</target>
+
+
+<target iqn.2022-02.arpa.home:config.target2>
+    backing-store /dev/vg/hcloud-iscsi-target2
+    initiator-address 192.168.0.0/16
+    write-cache off
+</target>
+
+
+<target iqn.2022-02.arpa.home:config.target3>
+    backing-store /dev/vg/hcloud-iscsi-target3
+    initiator-address 192.168.0.0/16
+    write-cache off
+</target>
+
+
+<target iqn.2022-02.arpa.home:config.target4>
+    backing-store /dev/vg/hcloud-iscsi-target4
+    initiator-address 192.168.0.0/16
+    write-cache off
+</target>
+
+
+

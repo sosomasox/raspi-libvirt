@@ -1,0 +1,416 @@
+
+
+
+sudo apt update
+
+sudo apt install cpu-checker
+
+kvm-ok
+
+sudo apt -y install \
+  qemu-kvm \
+  libvirt-daemon-system \
+  libvirt-daemon \
+  virtinst \
+  bridge-utils \
+  libguestfs-tools \
+  virt-top \
+  qemu-efi \
+  ipxe-qemu \
+  dnsmasq
+
+sudo usermod -aG libvirt      ubuntu
+sudo usermod -aG libvirt-qemu ubuntu
+sudo usermod -aG kvm          ubuntu
+
+sudo systemctl is-active libvirtd
+
+sudo virt-host-validate | egrep -v "PASS|WARN"
+
+sudo virsh nodeinfo
+
+logout
+
+
+
+sudo nmcli con add type bridge ifname pistackbr0   
+
+
+
+sudo lsmod | grep vhost
+sudo modprobe vhost_net
+sudo lsmod | grep vhost
+
+sudo modprobe vhost_net
+sudo sh -c "cat > /etc/modules-load.d/vhost_net.conf <<EOF
+vhost_net
+EOF"
+
+
+
+sudo apt install cloud-image-utils
+sudo cloud-localds user-data.img user-data
+
+
+sudo qemu-img convert ./ubuntu-20.04-server-cloudimg-arm64.img -O raw /dev/sdb
+
+sudo genisoimage -output user-data.iso -volid cidata -joliet -rock user-data meta-data
+
+
+sudo iscsiadm -m discoverydb -t sendtargets -p config.home.arpa:3260 --discover
+sudo iscsiadm -m node -T iqn.2022-02.arpa.home:config.target1 --login
+
+
+
+
+
+
+
+
+sudo dd if=ubuntu-20.04-server-cloudimg-arm64.img of=/dev/vg/110474138 bs=1M conv=fsync status=progress
+
+sudo dd if=ubuntu-20.04-server-cloudimg-arm64.img of=/dev/sdb bs=1M conv=fsync status=progress
+
+sudo genisoimage -output user-data.img -volid cidata -joliet -rock user-data meta-dat
+
+
+sudo virt-install \
+  --name test \
+  --vcpus=1 \
+  --memory 2048  \
+  --disk path=/home/ubuntu/user-data.img,device=cdrom \
+  --disk path=/dev/vg/110474138,bus=virtio,format=raw \
+  --virt-type kvm \
+  --graphics vnc,password=vnc,listen=0.0.0.0,keymap=ja \
+  --noautoconsole \
+  --os-type=linux \
+  --os-variant=ubuntu20.04 \
+  --import
+
+sudo virt-install \
+  --name test \
+  --vcpus=1 \
+  --memory 2048  \
+  --disk path=/home/ubuntu/user-data.img,device=cdrom \
+  --disk path=/dev/sdb,bus=virtio,format=raw \
+  --virt-type kvm \
+  --graphics vnc,password=vnc,listen=0.0.0.0,keymap=ja \
+  --noautoconsole \
+  --os-type=linux \
+  --os-variant=ubuntu20.04 \
+  --import
+
+
+virsh shutdown test
+virsh undefine --nvram test
+
+virsh destroy test
+
+sudo apt update && sudo apt install fio
+fio fio.txt --output `hostname`.fio
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+sudo virt-install \
+  --name test \
+  --vcpus=1 \
+  --memory 2048  \  
+  --disk path=/home/ubuntu/user-data.img,device=cdrom \
+  --disk path=/dev/sdb,bus=virtio,format=raw \
+  --virt-type kvm \
+  --graphics vnc,password=vnc,listen=0.0.0.0,keymap=ja \
+  --noautoconsole \
+  --os-type=linux \
+  --os-variant=ubuntu20.04 \
+  --import
+
+
+
+--network bridge=br0
+
+
+
+virt-install \
+  --name vm-01 \
+  --vcpus=1 \
+  --memory 1024  \
+  --disk=/dev/sdb,bus=virtio,format=raw \
+  --virt-type kvm \
+  --graphics vnc,password=vnc,listen=0.0.0.0,keymap=ja \
+  --noautoconsole \
+  --os-type=linux \
+  --os-variant=ubuntu20.04 \
+  --import
+
+
+
+http://minio.home.arpa:9000/hcloud/images/ubuntu-20.04.3-preinstalled-server-arm64+raspi.img
+
+
+virsh list --all
+virsh console test
+virsh start test
+virt-top
+virsh vncdisplay test
+virsh shutdown test
+virsh destroy test
+virsh undefine --nvram test
+
+
+
+sudo virsh net-dhcp-leases default
+
+
+
+virsh migrate --live --persistent --verbose --domain vm-01 qemu+ssh://hv-2.pistack.home.arpa/system
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+sudo qemu-img create -f qcow2 /srv/nfs/tmp/test.qcow2 50G
+
+virt-install --name test --vcpus=4 --memory 3072  \
+  --disk=/srv/nfs/tmp/test.qcow2,format=qcow2,bus=virtio \
+  --virt-type kvm \
+  --graphics vnc,password=vnc,listen=0.0.0.0,keymap=ja \
+  --noautoconsole \
+  --os-type=ubuntu18.04 \
+  --cdrom=/srv/nfs/media/ubuntu-18.04.5-server-arm64.iso
+
+virsh console test
+
+
+
+
+
+--vcpus=4 --memory 6144
+
+
+--vcpus=4 --memory 4096
+--vcpus=2 --memory 4096
+
+--vcpus=4 --memory 3072
+--vcpus=2 --memory 3072
+
+--vcpus=2 --memory 2048
+--vcpus=1 --memory 2048
+--vcpus=2 --memory 1024
+--vcpus=1 --memory 1024
+--vcpus=1 --memory  512
+
+
+
+sudo qemu-img create -f qcow2 /srv/nfs/tmp/vm1.qcow2 50G
+
+virt-install --name vm1 --memory 1024 --vcpus=2 \
+  --disk=/srv/nfs/tmp/vm1.qcow2,format=qcow2,bus=virtio \
+  --virt-type kvm \
+  --graphics vnc,password=vnc,listen=0.0.0.0,keymap=ja \
+  --noautoconsole \
+  --os-type=ubuntu18.04 \
+  --cdrom=/srv/nfs/media/ubuntu-18.04.5-server-arm64.iso
+
+virsh console vm1
+
+
+
+sudo qemu-img create -f qcow2 /srv/nfs/tmp/vm2.qcow2 50G
+
+sudo virt-install --name vm2 --memory 1024 --vcpus=2 \
+  --disk=/srv/nfs/tmp/vm2.qcow2,format=qcow2,bus=virtio \
+  --virt-type kvm \
+  --graphics vnc,password=vnc,listen=0.0.0.0,keymap=ja \
+  --noautoconsole \
+  --os-type=ubuntu18.04 \
+  --cdrom=/srv/nfs/media/ubuntu-18.04.5-server-arm64.iso
+
+virsh console vm2
+
+https://cdimage.ubuntu.com/releases/20.04/release/ubuntu-18.04.4-live-server-arm64.iso
+
+sudo qemu-img create -f qcow2 /srv/nfs/tmp/vm3.qcow2 50G
+
+sudo virt-install --name vm3 --memory 1024 --vcpus=2 \
+  --disk=/srv/nfs/tmp/vm3.qcow2,format=qcow2,bus=virtio \
+  --virt-type kvm \
+  --graphics vnc,password=vnc,listen=0.0.0.0,keymap=ja \
+  --noautoconsole \
+  --os-type=ubuntu18.04 \
+  --cdrom=/srv/nfs/media/ubuntu-18.04.5-server-arm64.iso
+
+virsh console vm3
+
+
+
+virsh list --all
+
+virsh console [vm_name]
+
+virsh start [vm_name]
+
+virt-top
+
+virsh vncdisplay [vm_name]
+
+virsh shutdown [vm_name]
+
+virsh destroy [vm_name]
+
+virsh undefine --nvram [vm_name]
+
+
+
+virt-install --name vm1 --memory 1024 --vcpus=2 \
+  --disk=/srv/nfs/tmp/vm1.qcow2,format=qcow2,bus=virtio \
+  --virt-type kvm \
+  --graphics vnc,password=vnc,listen=0.0.0.0,keymap=ja \
+  --noautoconsole \
+  --os-type=ubuntu18.04 \
+  --boot hd
+
+sudo virt-install --name vm2 --memory 1024 --vcpus=2 \
+  --disk=/srv/nfs/tmp/vm2.qcow2,format=qcow2,bus=virtio \
+  --virt-type kvm \
+  --graphics vnc,password=vnc,listen=0.0.0.0,keymap=ja \
+  --noautoconsole \
+  --os-type=ubuntu18.04 \
+  --boot hd
+
+sudo virt-install --name vm3 --memory 1024 --vcpus=2 \
+  --disk=/srv/nfs/tmp/vm3.qcow2,format=qcow2,bus=virtio \
+  --virt-type kvm \
+  --graphics vnc,password=vnc,listen=0.0.0.0,keymap=ja \
+  --noautoconsole \
+  --os-type=ubuntu18.04 \
+  --boot hd
+
+
+ls /etc/libvirt/qemu/
+
+
+
+
+sudo virsh pool-list --all
+
+sudo virsh pool-define-as images  logical --source-dev /dev/sda1 --target /dev/images_pool
+sudo virsh pool-define-as volumes logical --source-dev /dev/sda2 --target /dev/volumes_pool
+
+
+
+sudo virsh pool-build images
+sudo virsh pool-start images
+sudo virsh pool-autostart images
+
+sudo virsh pool-build volumes
+sudo virsh pool-start volumes
+sudo virsh pool-autostart volumes
+
+sudo virsh pool-info images
+sudo virsh pool-info volumes
+
+
+
+sudo virt-install --name test --vcpus=1 --memory 2048  \
+  --connect qemu:///system \
+  --disk pool=volumes,size=32,bus=virtio \
+  --virt-type kvm \
+  --graphics vnc,password=vnc,listen=0.0.0.0,keymap=ja \
+  --noautoconsole \
+  --os-type=ubuntu20.04 \
+  --cdrom=/var/libvirt/images/ubuntu-20.04.2-live-server-arm64.iso
+
+
+sudo virsh console test
+
+
+sudo virt-install --name vm --vcpus=2 --memory 2048  \
+  --connect qemu:///system \
+  --disk pool=volumes,size=32,bus=virtio \
+  --virt-type kvm \
+  --graphics vnc,password=vnc,listen=0.0.0.0,keymap=ja \
+  --noautoconsole \
+  --os-type=ubuntu18.04 \
+  --cdrom=/var/libvirt/images/ubuntu-18.04.5-server-arm64.iso
+
+
+
+sudo virt-top
+
+
+sudo virsh vol-create-as --pool vdisk --name volume1 --capacity 20GB --allocation 0 --format qcow2
+
+
+sudo virsh vol-delete --pool vdisk volume1
+
+
+sudo virsh pool-destroy images
+sudo virsh pool-delete images
+sudo virsh pool-undefine images
+
+sudo virsh pool-destroy
+sudo virsh pool-delete iso
+sudo virsh pool-undefine iso
+
+
+sudo virt-install --name vm1 --vcpus=1 --memory 1024  \
+  --connect qemu:///system \
+  --disk=/dev/libvirt_lvm/volume1,format=qcow2,bus=virtio \
+  --virt-type kvm \
+  --graphics vnc,password=vnc,listen=0.0.0.0,keymap=ja \
+  --noautoconsole \
+  --os-type=ubuntu18.04 \
+  --location=/media/iso/ubuntu-18.04.6-server-arm64.iso
+
+sudo virsh console vm1
+
+virt-install --name test --vcpus=2 --memory 1024  \
+  --disk=/dev/libvirt_lvm/volume1,format=qcow2,bus=virtio \
+  --virt-type kvm \
+  --graphics vnc,password=vnc,listen=0.0.0.0,keymap=ja \
+  --noautoconsole \
+  --os-type=ubuntu18.04 \
+  --boot hd
+
+
+
+
+
+
+
+
+
+  qemu     14044 25.2 19.3 19736792 19187728 ?   Sl   Jul03 43231:08 /usr/libexec/qemu-kvm -name www2501 -S -M rhel6.5.0 -cpu SandyBridge,+erms,+smep,+fsgsbase,+pdpe1gb,+rdrand,+f16c,+osxsave,+dca,+pcid,+pdcm,+xtpr,+tm2,+est,+smx,+vmx,+ds_cpl,+monitor,+dtes64,+pbe,+tm,+ht,+ss,+acpi,+ds,+vme -enable-kvm -m 18432 -realtime mlock=off -smp 3,sockets=3,cores=1,threads=1 -uuid 7b09ac49-3f5b-f8a9-8985-58f34cd7209b -nodefconfig -nodefaults -chardev socket,id=charmonitor,path=/var/lib/libvirt/qemu/www2501.monitor,server,nowait -mon chardev=charmonitor,id=monitor,mode=control -rtc base=utc -no-shutdown -device piix3-usb-uhci,id=usb,bus=pci.0,addr=0x1.0x2 -drive file=/dev/tank/www2501-vtbd0,if=none,id=drive-virtio-disk0,format=raw,cache=none,aio=native -device virtio-blk-pci,scsi=off,bus=pci.0,addr=0x4,drive=drive-virtio-disk0,id=virtio-disk0,bootindex=1 -drive file=/dev/tank/www2501-vtbd1,if=none,id=drive-virtio-disk1,format=raw,cache=none,aio=native -device virtio-blk-pci,scsi=off,bus=pci.0,addr=0x5,drive=drive-virtio-disk1,id=virtio-disk1 -netdev tap,fd=22,id=hostnet0,vhost=on,vhostfd=24 -device virtio-net-pci,netdev=hostnet0,id=net0,mac=52:54:00:ed:5f:01,bus=pci.0,addr=0x3 -chardev pty,id=charserial0 -device isa-serial,chardev=charserial0,id=serial0 -vnc 0.0.0.0:3 -k ja -vga cirrus -device virtio-balloon-pci,id=balloon0,bus=pci.0,addr=0x6
+
+
+
